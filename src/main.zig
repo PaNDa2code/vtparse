@@ -22,7 +22,7 @@ fn state(table_entry: u8) ?pt.ParserState {
     return @enumFromInt(val);
 }
 
-pub const ParserCallback = *const fn (state: *const ParserData, to_action: pt.Action, char: u8) void;
+pub const ParserCallback = *const fn (state: *const ParserData, to_action: pt.Action, char: u8, user_data: ?*anyopaque) void;
 
 pub const ParserData = struct {
     state: pt.ParserState,
@@ -73,7 +73,7 @@ pub const VTParser = struct {
         // we hand to our client for processing
 
         switch (in_action) {
-            pt.Action.PRINT, pt.Action.EXECUTE, pt.Action.HOOK, pt.Action.PUT, pt.Action.OSC_START, pt.Action.OSC_PUT, pt.Action.OSC_END, pt.Action.UNHOOK, pt.Action.CSI_DISPATCH, pt.Action.ESC_DISPATCH => self.cb(&self.data, in_action, ch),
+            pt.Action.PRINT, pt.Action.EXECUTE, pt.Action.HOOK, pt.Action.PUT, pt.Action.OSC_START, pt.Action.OSC_PUT, pt.Action.OSC_END, pt.Action.UNHOOK, pt.Action.CSI_DISPATCH, pt.Action.ESC_DISPATCH => self.cb(&self.data, in_action, ch, self.user_data),
 
             pt.Action.IGNORE => {},
 
