@@ -159,8 +159,8 @@ pub const VTParser = struct {
     }
 };
 
-fn testCallback(parser_state: *const ParserData, to_action: pt.Action, ch: u8) void {
-    std.debug.print("Recieved action: {}, State: {} parser, char: {}\n", .{ to_action, parser_state, ch });
+fn testCallback(parser_state: *const ParserData, to_action: pt.Action, ch: u8, _: ?*anyopaque) void {
+    std.log.debug("Recieved action: {}, State: {} parser, char: {}\n", .{ to_action, parser_state, ch });
 }
 
 test "VTParser" {
