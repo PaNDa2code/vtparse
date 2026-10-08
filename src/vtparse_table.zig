@@ -52,21 +52,11 @@ fn ground_table(char: u8) ?StateTransition {
         0x19 => .{ .action = .EXECUTE, .to_state = null },
         0x1c...0x1f => .{ .action = .EXECUTE, .to_state = null },
         0x20...0x7f => .{ .action = .PRINT, .to_state = null },
+        0x80...0x9f => .{ .action = .PRINT, .to_state = null },
+        0xa0...0xff => .{ .action = .PRINT, .to_state = null },
         0x18 => .{ .action = .EXECUTE, .to_state = .GROUND },
         0x1a => .{ .action = .EXECUTE, .to_state = .GROUND },
-        0x80...0x8f => .{ .action = .EXECUTE, .to_state = .GROUND },
-        0x91...0x97 => .{ .action = .EXECUTE, .to_state = .GROUND },
-        0x99 => .{ .action = .EXECUTE, .to_state = .GROUND },
-        0x9a => .{ .action = .EXECUTE, .to_state = .GROUND },
-        0x9c => .{ .action = null, .to_state = .GROUND },
         0x1b => .{ .action = null, .to_state = .ESCAPE },
-        0x98 => .{ .action = null, .to_state = .SOS_PM_APC_STRING },
-        0x9e => .{ .action = null, .to_state = .SOS_PM_APC_STRING },
-        0x9f => .{ .action = null, .to_state = .SOS_PM_APC_STRING },
-        0x90 => .{ .action = null, .to_state = .DCS_ENTRY },
-        0x9d => .{ .action = null, .to_state = .OSC_STRING },
-        0x9b => .{ .action = null, .to_state = .CSI_ENTRY },
-        else => null,
     };
 }
 
@@ -437,8 +427,8 @@ fn osc_string_table(char: u8) ?StateTransition {
     };
 }
 
-fn make_table_entry(func: TableFunc) [0xFF]u8 {
-    var table: [0xFF]u8 = undefined;
+fn make_table_entry(func: TableFunc) [0x100]u8 {
+    var table: [0x100]u8 = undefined;
     for (&table, 0..) |*slot, i| {
         const value = func(i);
         if (value) |v| {
@@ -480,9 +470,9 @@ const table_funcs = [@typeInfo(ParserState).@"enum".fields.len]TableFunc{
 };
 
 /// Make the table by looping over the
-fn make_table() [@typeInfo(ParserState).@"enum".fields.len][0xFF]u8 {
+fn make_table() [@typeInfo(ParserState).@"enum".fields.len][0x100]u8 {
     @setEvalBranchQuota(10000);
-    var table: [@typeInfo(ParserState).@"enum".fields.len][0xFF]u8 = undefined;
+    var table: [@typeInfo(ParserState).@"enum".fields.len][0x100]u8 = undefined;
     for (&table, table_funcs) |*slot, func| {
         slot.* = make_table_entry(func);
     }
