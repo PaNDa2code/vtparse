@@ -452,7 +452,7 @@ fn make_table_entry(func: TableFunc) [0x100]u8 {
     return table;
 }
 
-const table_funcs = [@typeInfo(ParserState).@"enum".fields.len]TableFunc{
+const table_funcs = [@typeInfo(ParserState).@"enum".field_names.len]TableFunc{
     csi_entry_table,
     csi_ignore_table,
     csi_intermediate_table,
@@ -470,9 +470,9 @@ const table_funcs = [@typeInfo(ParserState).@"enum".fields.len]TableFunc{
 };
 
 /// Make the table by looping over the
-fn make_table() [@typeInfo(ParserState).@"enum".fields.len][0x100]u8 {
+fn make_table() [@typeInfo(ParserState).@"enum".field_names.len][0x100]u8 {
     @setEvalBranchQuota(10000);
-    var table: [@typeInfo(ParserState).@"enum".fields.len][0x100]u8 = undefined;
+    var table: [@typeInfo(ParserState).@"enum".field_names.len][0x100]u8 = undefined;
     for (&table, table_funcs) |*slot, func| {
         slot.* = make_table_entry(func);
     }
@@ -481,7 +481,7 @@ fn make_table() [@typeInfo(ParserState).@"enum".fields.len][0x100]u8 {
 
 pub const parse_table = make_table();
 
-pub const entry_actions = [@typeInfo(ParserState).@"enum".fields.len]?Action{
+pub const entry_actions = [@typeInfo(ParserState).@"enum".field_names.len]?Action{
     Action.CLEAR, // CSI_ENTRY
     null, // none for CSI_IGNORE ,
     null, // none for CSI_INTERMEDIATE ,
@@ -498,7 +498,7 @@ pub const entry_actions = [@typeInfo(ParserState).@"enum".fields.len]?Action{
     null, // none for SOS_PM_APC_STRING ,
 };
 
-pub const exit_actions = [@typeInfo(ParserState).@"enum".fields.len]?Action{
+pub const exit_actions = [@typeInfo(ParserState).@"enum".field_names.len]?Action{
     null, // none for CSI_ENTRY
     null, // none for CSI_IGNORE
     null, // none for CSI_INTERMEDIATE
